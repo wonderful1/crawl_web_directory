@@ -25,10 +25,10 @@ def get_dir(old_url,new_url):
     old_url=old_url.strip('/')
     new_url=new_url.strip('/')
     #print(old_url,new_url)
-    dir=new_url[len(old_url)+1:-1]
+    dir=new_url[len(old_url)+1:]
     return dir
 
-def get_url(page_url,outdir):
+def get_url(page_url,outdir,raw_url):
     try:
         doc = pq(url=page_url,encoding='utf-8')
     except:
@@ -38,20 +38,20 @@ def get_url(page_url,outdir):
     for a in a_links.items():
         href = a.attr('href')
         name = a.text()
-        if href == '../' or href == './' in href:
+        if href == '../' or href == './' in href or 'Parent Directory' in name:
             continue
         else:
             if href[-1] == '/':   # when directory
                 new_url = os.path.join(page_url, name)
-                dir = get_dir(page_url,new_url)  #get the relative path
+                dir = get_dir(raw_url,new_url)  #get the relative path
                 if os.path.exists(dir)==False:
                     os.makedirs(dir)
-                get_url(new_url)
+                get_url(new_url,outdir,raw_url)
             else:   # when file
-                path = os.path.join(page_url, name)
-                name = path[29:]
-                download_file(path, name)
-                # print(os.path.join(page_url, href))
+                file_url = os.path.join(page_url, name)
+                dir = get_dir(raw_url,file_url)
+                file_name = os.path.join(outdir,dir)
+                download_file(file_url, file_name)
 
 def main(): 
     parser = get_parser()
@@ -60,6 +60,7 @@ def main():
     if not args['url']:
         parser.print_help()
         return
+    get_url(args['url'],args['outdir'],args['url'])
 
 if __name__ == '__main__':
     main()
