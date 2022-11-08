@@ -1,13 +1,13 @@
 
-## Introduction
+### Introduction
 Recursively download whole FTP directories
 
-## requeirments
-argparse==1.1
-pyquery==1.4.1
-requests==2.25.1
+### requeirments
+argparse==1.1  
+pyquery==1.4.1  
+requests==2.25.1  
 
-## Usage
+### Usage
 ```
 usage: crawl_web_directory.py [-h] [-u URL] [-o OUTDIR]
 
